@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "addon-template",
+  "version": "${version}",
+  "name": "Auton8",
+  "description": "MQTT link + agent hooks for Baritone control",
+  "authors": [
+    "KiLAB Gaming"
+  ],
+  "icon": "assets/template/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "meteor": [
+      "com.kilab.auton8.Auton8"
+    ]
+  },
+  "custom": {
+    "meteor-client:color": "225,25,25"
+  },
+  "depends": {
+    "java": ">=21",
+    "minecraft": ["${mc_version}", "1.21.7", "1.21.6"],
+    "meteor-client": "*"
+  }
+}
