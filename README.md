@@ -1,68 +1,75 @@
-# Auton8 (Prototype) — n8n + MQTT + Minecraft (Fabric + Baritone)
+<table align="center" width="100%">
+  <tr>
+    <td align="center" width="130" style="min-width:130px;">
+      <img src="src/main/resources/assets/template/icon.png" alt="Auton8 logo" width="110">
+    </td>
+    <td>
 
-> **Status: Archived / Unmaintained**  
-> This repo is an experiment to show a different way to automate Minecraft using **n8n** (no/low-code workflows) talking to a client-side Fabric mod via **MQTT** (Mosquitto). It’s not meant to be production-ready. I’m archiving it to encourage others to **recreate the idea better** and take it to the next level.
+### Auton8 (Prototype)
+#### Minecraft Automation with N8N and MQTT
 
-## What this is (plain-English)
-- The Minecraft **client** runs a Fabric mod (“Auton8”) alongside **Baritone**.
-- A local **Mosquitto** MQTT broker moves messages between the mod and **n8n**.
-- **n8n** (workflow builder) reacts to in-game events and publishes commands (e.g. `#goto`, `#build`, etc.), so non-Java devs can automate useful sequences.
-
-Think: _“If this happens in game → then do these steps”_ — without writing Java.
-
-## Why this exists
-- Baritone can do a lot, but stitching actions together usually means code.
-- n8n makes it easy to **chain actions**, add timers/conditions, log to sheets/DBs, etc.
-- MQTT gives a simple, robust bridge between the game and your automations.
-
-## How it works (high-level)
-1. **Minecraft (Fabric client)**
-    - Mods: **Fabric Loader**, **Fabric API**, **Baritone (Fabric)**, and this **Auton8** mod.
-    - The mod publishes events to MQTT and subscribes for commands.
-2. **Mosquitto (MQTT broker)**
-    - Lightweight message bus; persists retained/QoS messages to `mosquitto.db`.
-3. **n8n**
-    - Workflows subscribe to topics, make decisions, and publish commands back.
+**Status: Archived / Unmaintained**  
+This project is a proof-of-concept for automating Minecraft gameplay using **n8n** (no/low-code workflows) over **MQTT** (Mosquitto) to a **Fabric** client mod that drives **Baritone**.
+It is not production-ready. The goal is to inspire someone to **rebuild this idea properly**, with better UX, safer defaults, and a broader ecosystem.
 
 
+  </tr>
+</table>
 
+## Quick Start (Windows)
 
----
+### 1) Install Docker Desktop
+Download & install:  
+https://docs.docker.com/desktop/setup/install/windows-install/
 
-## Quick Start
+### 2) Install Fabric, Baritone, and required mods (Minecraft 1.21.8)
+Put these **four** files into your Minecraft **mods** folder:
+> ⚠️ This prototype targets **Minecraft 1.21.8** specifically. Stick to matching Fabric/Mod versions.
 
-### 0) Requirements
-- Windows 10/11 (for the provided `.bat` scripts)
-- Docker Desktop
-- Minecraft + Fabric Loader
-- Mods placed in your **`.minecraft/mods`** folder:
-    - **Fabric API**
-    - **Baritone (Fabric build)**
-    - **Auton8** (download the release JAR from this repo)
-    - *(If your Baritone build expects a separate Baritone API, include it as well. Some builds bundle it.)*
+Downloads:
+- Baritone API (Fabric 1.15.0):  
+  https://github.com/cabaletta/baritone/releases/download/v1.15.0/baritone-api-fabric-1.15.0.jar
+- Baritone Standalone (Fabric 1.15.0):  
+  https://github.com/cabaletta/baritone/releases/download/v1.15.0/baritone-standalone-fabric-1.15.0.jar
+- Fabric API (for 1.21.8):  
+  https://modrinth.com/mod/fabric-api?version=1.21.8#download
+- Mod Menu (for 1.21.8):  
+  https://modrinth.com/mod/modmenu?version=1.21.8&loader=fabric#download
 
-### 1) Download & install the mod
-- Grab the **latest release** from this repo (Auton8 JAR).
-- Drop it into your `.minecraft/mods` folder alongside Fabric API and Baritone.
+Also place the **Auton8** mod JAR (from this repo’s Releases) into the same `mods` folder.
 
-### 2) Start the local services
-- Double-click **`start-docker.bat`** (included in the repo).  
-  This spins up:
-    - **Mosquitto** on `127.0.0.1:1883`
-    - **n8n** editor at `http://localhost:5678`
+### 3) Start the local services (Mosquitto + n8n)
+From the project root, double-click:
+- `start-docker.bat`
 
-> The first run will auto-create a blank `mosquitto/config/passwd` file and the `mosquitto/data/mosquitto.db` persistence file.
+This will run Docker Compose and bring up:
+- **Mosquitto** on `127.0.0.1:1883`
+- **n8n** on `http://localhost:5678`
 
-### 3) Run Minecraft
-- Launch your Fabric profile and join a world/server.
-- The Auton8 mod should connect to MQTT and start sending/receiving topics.
+On the first run, the stack auto-creates:
+- an empty `mosquitto/config/passwd`
+- `mosquitto/data/mosquitto.db` (persistence)
 
-### 4) Build a simple n8n workflow
-- Open `http://localhost:5678`
-- Create an **MQTT Trigger** → subscribe to your event topic (e.g., `auton8/events/#`)
-- Add logic (function/code/IF nodes) → publish to a command topic (e.g., `auton8/cmd`)
-- Watch Baritone run your chained steps.
+### 4) Open n8n and create an account
+Visit:  
+`http://localhost:5678`  
+Create your n8n account and log in.
+
+### 5) Launch Minecraft
+Start your Fabric profile (1.21.8).  
+Open Mod Menu you should see **Auton8** listed.  
+The mod connects to MQTT and publishes/receives on the topics below.
 
 ---
 
-## Project layout
+## MQTT topics & default credentials (current prototype)
+
+The current build has the following values hard-coded:  
+You’ll need to use these when setting up your MQTT Trigger node in n8n.
+
+```java
+private static final String CLIENT_ID  = "kilab-pc1";
+private static final String USERNAME   = "kilab-pc1";
+private static final String PASSWORD   = "YOUR_SUPER_STRONG_PASSWORD";
+private static final String CMD_TOPIC  = "mc/kilab-pc1/cmd";
+private static final String EVT_TOPIC  = "mc/kilab-pc1/events";
