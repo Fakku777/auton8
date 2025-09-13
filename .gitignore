@@ -1,44 +1,33 @@
-# gradle
-
+# --- build & IDE ---
 .gradle/
 build/
 out/
 classes/
-
-# eclipse
-
 *.launch
-
-# idea
-
 .idea/
 *.iml
 *.ipr
 *.iws
-
-# vscode
-
 .settings/
 .vscode/
 bin/
 .classpath
 .project
-
-# macos
-
 *.DS_Store
 
-# fabric
-
+# --- Fabric local run dir ---
 run/
 
-# Local runtime stuff
-mosquitto/
-n8n/
+# --- Mosquitto: ignore all, then allow config (except passwd) ---
+/mosquitto/*
+!/mosquitto/config/
+!/mosquitto/config/mosquitto.conf
+!/mosquitto/config/acl
+/mosquitto/config/passwd
+/mosquitto/data/
+
+# --- n8n local state ---
 /n8n/
 
-# Local runtime stuff
-mosquitto/
-n8n/
-run/
+# --- env files ---
 .env

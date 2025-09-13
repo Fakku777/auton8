@@ -1,6 +1,7 @@
 package com.kilab.auton8.core;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.kilab.auton8.bridges.*;
 import com.kilab.auton8.mqtt.MqttBus;
 import net.minecraft.client.MinecraftClient;
@@ -44,10 +45,31 @@ public final class Auton8Core {
             telemetryBridge.onCommand(json);
             serverChatBridge.onCommand(json);
         });
+
+        // Listen for connection/session events so we can reset Baritone's plan queue
+        bus.onMessage(this.cfg.evtTopic, (topic, json) -> {
+            try {
+                JsonObject j = JsonParser.parseString(json).getAsJsonObject();
+
+                // Two shapes are emitted by ConnectionBridge:
+                // 1) {type:"session_start", ...}
+                // 2) {type:"status", value:"connected", reset:true, ...}
+                String type  = j.has("type")  ? j.get("type").getAsString() : "";
+                String value = j.has("value") ? j.get("value").getAsString() : "";
+                boolean reset = j.has("reset") && j.get("reset").getAsBoolean();
+
+                if ("session_start".equals(type) || ("status".equals(type) && "connected".equals(value) && reset)) {
+                    baritoneBridge.resetPlanOnSessionStart();
+                }
+            } catch (Throwable ignored) { /* never break on event parsing */ }
+        });
     }
 
     public void enable() {
         bus.connect();
+
+        // Fresh plan/queue for this runtime stretch
+        baritoneBridge.resetPlanOnSessionStart();
 
         // --- Announce a brand-new session so n8n can hard-reset state ---
         emitSessionStart();

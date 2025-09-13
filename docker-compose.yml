@@ -9,7 +9,9 @@ services:
     # expose to HOST loopback only (not the LAN):
     ports:
       - "127.0.0.1:1883:1883"
-    command: ["/usr/sbin/mosquitto","-c","/mosquitto/config/mosquitto.conf"]
+    command: >
+      sh -c "touch /mosquitto/config/passwd &&
+             /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf"
 
   n8n:
     image: n8nio/n8n:latest
