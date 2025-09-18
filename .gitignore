@@ -31,3 +31,4 @@ run/
 
 # --- env files ---
 .env
+n8n-minecraft-nodes/node_modules/

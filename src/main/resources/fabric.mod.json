@@ -5,13 +5,13 @@
   "name": "Auton8",
   "description": "MQTT link + agent hooks for Baritone control",
   "authors": [
-    "KiLAB Gaming"
+    "777April"
   ],
   "icon": "assets/template/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.kilab.auton8.Auton8"
+      "com.april777.auton8.Auton8"
     ]
   },
   "custom": {

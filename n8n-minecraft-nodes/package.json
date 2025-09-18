@@ -1,0 +1,79 @@
+{
+  "name": "n8n-nodes-minecraft",
+  "version": "1.0.0",
+  "description": "Comprehensive n8n nodes for Minecraft automation using Baritone, Minescript, and Meteor Client",
+  "keywords": [
+    "n8n-community-node-package",
+    "minecraft",
+    "automation",
+    "baritone",
+    "minescript",
+    "meteor-client"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/kilab/n8n-nodes-minecraft",
+  "author": {
+    "name": "KiLab Auton8 Project",
+    "email": "auton8@kilab.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kilab/n8n-nodes-minecraft.git"
+  },
+  "engines": {
+    "node": ">=18.10",
+    "pnpm": ">=8.9"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -s"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/MinecraftApi.credentials.js",
+      "dist/credentials/MinescriptApi.credentials.js",
+      "dist/credentials/MeteorApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Baritone/BaritonePathfinder.node.js",
+      "dist/nodes/Baritone/BaritoneBuilder.node.js",
+      "dist/nodes/Baritone/BaritoneExplorer.node.js",
+      "dist/nodes/Baritone/BaritoneSettings.node.js",
+      "dist/nodes/Minescript/MinescriptCommand.node.js",
+      "dist/nodes/Minescript/MinescriptChat.node.js",
+      "dist/nodes/Minescript/MinescriptBlocks.node.js",
+      "dist/nodes/Minescript/MinescriptPlayer.node.js",
+      "dist/nodes/Minescript/MinescriptInventory.node.js",
+      "dist/nodes/Minescript/MinescriptEntities.node.js",
+      "dist/nodes/Meteor/MeteorModule.node.js",
+      "dist/nodes/Meteor/MeteorConfig.node.js",
+      "dist/nodes/Minecraft/MinecraftSession.node.js",
+      "dist/nodes/Minecraft/MinecraftEvents.node.js",
+      "dist/nodes/Minecraft/MinecraftTelemetry.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.16",
+    "@typescript-eslint/parser": "^5.59.8",
+    "eslint-plugin-n8n-nodes-base": "^1.11.0",
+    "gulp": "^4.0.2",
+    "n8n-workflow": "*",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "ws": "^8.13.0",
+    "eventsource": "^2.0.2"
+  }
+}

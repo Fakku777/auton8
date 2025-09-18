@@ -1,0 +1,253 @@
+{
+  "name": "Automated Diamond Mining",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "startSession",
+        "sessionName": "diamond-mining-session"
+      },
+      "id": "session-start",
+      "name": "Start Mining Session",
+      "type": "n8n-nodes-minecraft.minecraftSession",
+      "position": [200, 200]
+    },
+    {
+      "parameters": {
+        "operation": "toggle",
+        "moduleCategory": "player",
+        "moduleName": "auto-eat",
+        "advancedOptions": {
+          "sendHudUpdate": true
+        }
+      },
+      "id": "enable-auto-eat",
+      "name": "Enable Auto Eat",
+      "type": "n8n-nodes-minecraft.meteorModule",
+      "position": [400, 200]
+    },
+    {
+      "parameters": {
+        "allowBreak": true,
+        "allowPlace": false,
+        "legitMine": true
+      },
+      "id": "configure-baritone",
+      "name": "Configure Baritone Settings",
+      "type": "n8n-nodes-minecraft.minescriptCommand",
+      "position": [600, 200]
+    },
+    {
+      "parameters": {
+        "operation": "goto",
+        "x": 0,
+        "y": 11,
+        "z": 0
+      },
+      "id": "go-to-mining-level",
+      "name": "Go to Mining Level",
+      "type": "n8n-nodes-minecraft.baritonePathfinder",
+      "position": [800, 200]
+    },
+    {
+      "parameters": {
+        "operation": "mine",
+        "targetBlocks": "diamond_ore gold_ore emerald_ore",
+        "mineCount": 64,
+        "advancedOptions": {
+          "legitMine": true,
+          "backfill": false
+        }
+      },
+      "id": "mine-ores",
+      "name": "Mine Valuable Ores",
+      "type": "n8n-nodes-minecraft.baritoneBuilder",
+      "position": [1000, 200]
+    },
+    {
+      "parameters": {
+        "operation": "getInventory"
+      },
+      "id": "check-inventory",
+      "name": "Check Inventory",
+      "type": "n8n-nodes-minecraft.minecraftSession",
+      "position": [1200, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "left": "{{$json.result.inventory.full}}",
+              "operation": "equal",
+              "right": true
+            }
+          ]
+        }
+      },
+      "id": "check-if-full",
+      "name": "Inventory Full?",
+      "type": "n8n-nodes-base.if",
+      "position": [1400, 200]
+    },
+    {
+      "parameters": {
+        "operation": "goto",
+        "x": 100,
+        "y": 64,
+        "z": 100
+      },
+      "id": "return-to-base",
+      "name": "Return to Base",
+      "type": "n8n-nodes-minecraft.baritonePathfinder",
+      "position": [1600, 150]
+    },
+    {
+      "parameters": {
+        "operation": "execute",
+        "minecraftCommand": "tp @s 0 11 0"
+      },
+      "id": "teleport-back",
+      "name": "Teleport Back to Mine",
+      "type": "n8n-nodes-minecraft.minescriptCommand",
+      "position": [1800, 150]
+    },
+    {
+      "parameters": {
+        "operation": "chat",
+        "message": "Mining operation completed successfully!"
+      },
+      "id": "announce-completion",
+      "name": "Announce Completion",
+      "type": "n8n-nodes-minecraft.minescriptCommand",
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "operation": "endSession"
+      },
+      "id": "end-session",
+      "name": "End Mining Session",
+      "type": "n8n-nodes-minecraft.minecraftSession",
+      "position": [1600, 300]
+    }
+  ],
+  "connections": {
+    "Start Mining Session": {
+      "main": [
+        [
+          {
+            "node": "Enable Auto Eat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enable Auto Eat": {
+      "main": [
+        [
+          {
+            "node": "Configure Baritone Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configure Baritone Settings": {
+      "main": [
+        [
+          {
+            "node": "Go to Mining Level",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Go to Mining Level": {
+      "main": [
+        [
+          {
+            "node": "Mine Valuable Ores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mine Valuable Ores": {
+      "main": [
+        [
+          {
+            "node": "Check Inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Inventory": {
+      "main": [
+        [
+          {
+            "node": "Inventory Full?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inventory Full?": {
+      "main": [
+        [
+          {
+            "node": "Return to Base",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Announce Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return to Base": {
+      "main": [
+        [
+          {
+            "node": "Teleport Back to Mine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Teleport Back to Mine": {
+      "main": [
+        [
+          {
+            "node": "Mine Valuable Ores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Announce Completion": {
+      "main": [
+        [
+          {
+            "node": "End Mining Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -31,9 +31,17 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${properties["loader_version"] as String}")
 
 
-    // MQTT (embed it so it’s available in-game)
-    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
-    include("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    // HTTP Client for Minescript API communication
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    include("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp-sse:4.12.0")
+    include("com.squareup.okhttp3:okhttp-sse:4.12.0")
+    
+    // Docker Java API for container management
+    implementation("com.github.docker-java:docker-java-core:3.3.4")
+    include("com.github.docker-java:docker-java-core:3.3.4")
+    implementation("com.github.docker-java:docker-java-transport-httpclient5:3.3.4")
+    include("com.github.docker-java:docker-java-transport-httpclient5:3.3.4")
 
     modLocalRuntime(files("libs/baritone.jar"))
     modLocalRuntime(files("libs/nether-pathfinder-1.4.1.jar"))
