@@ -5,71 +5,306 @@
     </td>
     <td>
 
-### Auton8 (Prototype)
-#### Minecraft Automation with N8N and MQTT
+### Auton8 (Enhanced)
+#### Minecraft Automation with n8n and Minescript API
 
-**Status: Archived / Unmaintained**  
-This project is a proof-of-concept for automating Minecraft gameplay using **n8n** (no/low-code workflows) over **MQTT** (Mosquitto) to a **Fabric** client mod that drives **Baritone**.
-It is not production-ready. The goal is to inspire someone to **rebuild this idea properly**, with better UX, safer defaults, and a broader ecosystem.
+**Status: Enhanced Proof-of-Concept**  
+This project automates Minecraft gameplay using **n8n** (no/low-code workflows) with **Minescript API** integration to a **Fabric** client mod that drives **Baritone** pathfinding and **Meteor Client** modules.
 
+**🔄 Major Updates (2024):**
+- **Migrated from MQTT to Minescript API** for improved reliability
+- **Added comprehensive n8n community nodes** for Minecraft automation
+- **Integrated Docker container management** for seamless n8n deployment
+- **Enhanced bridge system** with specialized components
+- **Restructured to april777 namespace** with proper attribution
 
+**Attribution:**
+- Original concept and base implementation: **KiLAB Gaming**
+- AI-assisted refactoring and extensions: **Claude (Anthropic)**
+- Current maintainer: **777April**
+
+**⚠️ Educational Purpose:** This is a proof-of-concept project for educational purposes.
+
+    </td>
   </tr>
 </table>
 
-## Quick Start (Windows)
+## 🏗️ Architecture Overview
 
-### 1) Install Docker Desktop
-Download & install:  
-https://docs.docker.com/desktop/setup/install/windows-install/
+The enhanced Auton8 system uses a **bridge-based architecture** where the `Auton8Core` coordinates multiple specialized bridges:
 
-### 2) Install Fabric, Baritone, and required mods (Minecraft 1.21.8)
-Put these **four** files into your Minecraft **mods** folder:
-> ⚠️ This prototype targets **Minecraft 1.21.8** specifically. Stick to matching Fabric/Mod versions.
+- **MinescriptClient**: HTTP-based communication with n8n via Minescript API
+- **DockerManager**: Automatic Docker container management for n8n
+- **BaritoneBridge**: Advanced pathfinding with plan execution and retry logic
+- **ChatBridge**: Bidirectional chat integration with deduplication
+- **TelemetryBridge**: Player position, health, and world state monitoring
+- **ConnectionBridge**: Session management and connection state tracking
+- **HudBridge**: In-game HUD integration for status display
 
-Downloads:
-- Baritone API (Fabric 1.15.0):  
-  https://github.com/cabaletta/baritone/releases/download/v1.15.0/baritone-api-fabric-1.15.0.jar
-- Baritone Standalone (Fabric 1.15.0):  
-  https://github.com/cabaletta/baritone/releases/download/v1.15.0/baritone-standalone-fabric-1.15.0.jar
-- Fabric API (for 1.21.8):  
-  https://modrinth.com/mod/fabric-api?version=1.21.8#download
-- Mod Menu (for 1.21.8):  
-  https://modrinth.com/mod/modmenu?version=1.21.8&loader=fabric#download
+## 📦 Docker Installation
 
-Also place the **Auton8** mod JAR (from this repo’s Releases) into the same `mods` folder.
+### Windows
+1. Download Docker Desktop from: https://docs.docker.com/desktop/setup/install/windows-install/
+2. Run the installer and follow the setup wizard
+3. Restart your computer when prompted
+4. Launch Docker Desktop and complete the initial setup
 
-### 3) Start the local services (Mosquitto + n8n)
-From the project root, double-click:
-- `start-docker.bat`
+### macOS
+1. Download Docker Desktop from: https://docs.docker.com/desktop/setup/install/mac-install/
+2. Drag Docker.app to your Applications folder
+3. Launch Docker from Applications
+4. Follow the setup wizard and grant necessary permissions
 
-This will run Docker Compose and bring up:
-- **Mosquitto** on `127.0.0.1:1883`
-- **n8n** on `http://localhost:5678`
+### Linux
 
-On the first run, the stack auto-creates:
-- an empty `mosquitto/config/passwd`
-- `mosquitto/data/mosquitto.db` (persistence)
+#### Debian/Ubuntu
+```bash
+# Update package index
+sudo apt update
 
-### 4) Open n8n and create an account
-Visit:  
-`http://localhost:5678`  
-Create your n8n account and log in.
+# Install required packages
+sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release
+
+# Add Docker's official GPG key
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Add Docker repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Add user to docker group (optional, avoids using sudo)
+sudo usermod -aG docker $USER
+
+# Start Docker service
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+#### Fedora/RHEL/CentOS
+```bash
+# Install required packages
+sudo dnf install dnf-plugins-core
+
+# Add Docker repository
+sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+# Install Docker
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Add user to docker group (optional)
+sudo usermod -aG docker $USER
+
+# Start Docker service
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+#### Arch Linux
+```bash
+# Install Docker
+sudo pacman -S docker docker-compose
+
+# Add user to docker group (optional)
+sudo usermod -aG docker $USER
+
+# Start Docker service
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+**Note:** After adding yourself to the docker group, log out and back in for the changes to take effect.
+
+## 🚀 Quick Start
+
+### 1) Install Required Mods (Minecraft 1.21.8)
+Place these files in your Minecraft **mods** folder:
+> ⚠️ This version targets **Minecraft 1.21.8** specifically.
+
+**Required Downloads:**
+- **Meteor Client** (latest for 1.21.8): https://meteorclient.com/download
+- **Baritone** (place in `libs/` folder): https://github.com/cabaletta/baritone/releases
+- **Fabric API** (for 1.21.8): https://modrinth.com/mod/fabric-api
+- **Mod Menu** (for 1.21.8): https://modrinth.com/mod/modmenu
+- **Auton8** mod JAR (build with `./gradlew build`)
+
+### 2) Build the Project
+```bash
+# Build the Minecraft mod
+./gradlew build
+
+# Build n8n community nodes (optional)
+cd n8n-minecraft-nodes
+npm install
+npm run build
+```
+
+### 3) Start Docker Services
+**Automatic (Recommended):** The mod auto-manages n8n Docker containers
+
+**Manual:**
+```bash
+# Windows
+run-docker.bat
+
+# Linux/macOS
+./run-docker.sh
+
+# Or using docker-compose directly
+docker-compose up -d
+```
+
+Services will be available at:
+- **n8n**: http://localhost:5678
+- **Minescript API**: http://localhost:5679
+
+### 4) Configure n8n
+1. Visit http://localhost:5678
+2. Create your n8n account
+3. Import example workflows from `n8n-minecraft-nodes/examples/workflows/`
+4. Configure Minescript API credentials in n8n nodes
 
 ### 5) Launch Minecraft
-Start your Fabric profile (1.21.8).  
-Open Mod Menu you should see **Auton8** listed.  
-The mod connects to MQTT and publishes/receives on the topics below.
+1. Start Minecraft with Fabric 1.21.8
+2. Open Meteor Client GUI (Right-Shift by default)
+3. Navigate to Auton8 modules and configure as needed
+4. The mod will auto-start n8n containers and establish API connection
 
----
+## 🔧 Development Commands
 
-## MQTT topics & default credentials (current prototype)
+```bash
+# Build the mod
+./gradlew build
 
-The current build has the following values hard-coded:  
-You’ll need to use these when setting up your MQTT Trigger node in n8n.
+# Run in development
+./gradlew runClient
 
+# Clean build
+./gradlew clean build
+
+# View Docker logs
+docker-compose logs -f
+
+# Stop services
+./stop-docker.sh  # or stop-docker.bat on Windows
+docker-compose down
+```
+
+## 📡 API Integration
+
+The system now uses **Minescript API** instead of MQTT:
+
+### Default Configuration (Hard-coded in current build)
 ```java
-private static final String CLIENT_ID  = "kilab-pc1";
-private static final String USERNAME   = "kilab-pc1";
-private static final String PASSWORD   = "YOUR_SUPER_STRONG_PASSWORD";
-private static final String CMD_TOPIC  = "mc/kilab-pc1/cmd";
-private static final String EVT_TOPIC  = "mc/kilab-pc1/events";
+// Minescript API endpoints
+Base URL: "http://127.0.0.1:5679/api"
+Client ID: "kilab-pc1"
+Auth Key: "your-super-strong-auth-key"
+
+// API Endpoints
+Command: "/cmd"      // Receives automation commands
+Events: "/events"    // Publishes game events
+HUD: "/hud"          // HUD-specific updates
+Baritone: "/baritone_state"  // Pathfinding state
+```
+
+### Session Management
+The system uses **UUID-based session IDs** to prevent stale command processing:
+- New session generated on each module activation
+- All API messages include session correlation
+- HTTP-based connection monitoring with auto-reconnection
+
+## 🎯 n8n Community Nodes
+
+This project includes comprehensive **n8n community nodes** for Minecraft automation:
+
+### Available Nodes
+- **Baritone Pathfinder**: Advanced pathfinding and navigation
+- **Baritone Builder**: Automated building and construction
+- **Minescript Command**: Execute Minecraft commands
+- **Minescript Chat**: Bidirectional chat integration
+- **Meteor Module**: Control Meteor Client modules
+- **Minecraft Session**: Session and event management
+- **Minecraft Telemetry**: Player and world monitoring
+
+### Installation (Manual)
+If not using auto-managed containers:
+```bash
+cd n8n-minecraft-nodes
+npm install
+npm run build
+# Link to your n8n installation
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Docker containers not starting:**
+- Ensure Docker is running
+- Check port availability (5678, 5679)
+- View logs: `docker-compose logs`
+
+**Minecraft mod not connecting:**
+- Verify Minescript API is accessible at localhost:5679
+- Check Minecraft logs for connection errors
+- Ensure firewall allows local connections
+
+**n8n workflows not triggering:**
+- Verify Minescript API credentials in n8n nodes
+- Check session ID correlation
+- Monitor API endpoints for activity
+
+### Debug Commands
+```bash
+# Check Docker containers
+docker ps
+
+# View n8n logs
+docker-compose logs n8n
+
+# Test API connectivity
+curl http://localhost:5679/api/status
+
+# Check Minecraft mod logs
+# Located in .minecraft/logs/latest.log
+```
+
+## 📁 Project Structure
+```
+auton8/
+├── src/main/java/com/april777/auton8/
+│   ├── bridges/          # Bridge implementations
+│   ├── core/            # Core system management
+│   ├── docker/          # Docker container management
+│   ├── minescript/      # Minescript API communication
+│   └── modules/         # Meteor client modules
+├── n8n-minecraft-nodes/ # n8n community nodes
+│   ├── nodes/           # Node implementations
+│   ├── credentials/     # API credentials
+│   └── examples/        # Example workflows
+├── docker-compose.yml   # Docker services configuration
+└── WARP.md             # Development guide
+```
+
+## 🤝 Contributing
+
+This is an educational proof-of-concept project. Contributions are welcome for:
+- Bug fixes and stability improvements
+- Additional n8n nodes
+- Documentation enhancements
+- Example workflows
+
+## 📄 License
+
+This project maintains the original license from KiLAB Gaming. See LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- **KiLAB Gaming**: Original Auton8 concept and implementation
+- **Meteor Client**: Module framework and integration
+- **Baritone**: Advanced pathfinding capabilities
+- **n8n**: Workflow automation platform
+- **Claude (Anthropic)**: AI assistance in refactoring and extensions
