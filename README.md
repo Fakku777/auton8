@@ -5,41 +5,69 @@
     </td>
     <td>
 
-### Auton8 (Enhanced)
+### Auton8
 #### Minecraft Automation with n8n and Minescript API
 
-**Status: Enhanced Proof-of-Concept**  
-This project automates Minecraft gameplay using **n8n** (no/low-code workflows) with **Minescript API** integration to a **Fabric** client mod that drives **Baritone** pathfinding and **Meteor Client** modules.
+This project lets you automate Minecraft gameplay using n8n workflows that communicate with a Fabric client mod. The mod integrates with Baritone for pathfinding and uses Meteor Client as its module framework.
 
-**🔄 Major Updates (2024):**
-- **Migrated from MQTT to Minescript API** for improved reliability
-- **Added comprehensive n8n community nodes** for Minecraft automation
-- **Integrated Docker container management** for seamless n8n deployment
-- **Enhanced bridge system** with specialized components
-- **Restructured to april777 namespace** with proper attribution
+The system has evolved from the original MQTT-based approach to use the Minescript API for more reliable communication between n8n and Minecraft. Docker containers are automatically managed to make setup easier.
 
 **Attribution:**
 - Original concept and base implementation: **KiLAB Gaming**
 - AI-assisted refactoring and extensions: **Claude (Anthropic)**
 - Current maintainer: **777April**
 
-**⚠️ Educational Purpose:** This is a proof-of-concept project for educational purposes.
+This is an educational proof-of-concept project.
 
     </td>
   </tr>
 </table>
 
-## 🏗️ Architecture Overview
+## Architecture
 
-The enhanced Auton8 system uses a **bridge-based architecture** where the `Auton8Core` coordinates multiple specialized bridges:
+The system uses a bridge-based architecture where the core coordinates different specialized components:
 
-- **MinescriptClient**: HTTP-based communication with n8n via Minescript API
-- **DockerManager**: Automatic Docker container management for n8n
-- **BaritoneBridge**: Advanced pathfinding with plan execution and retry logic
-- **ChatBridge**: Bidirectional chat integration with deduplication
-- **TelemetryBridge**: Player position, health, and world state monitoring
-- **ConnectionBridge**: Session management and connection state tracking
-- **HudBridge**: In-game HUD integration for status display
+- **MinescriptClient**: Handles HTTP communication with n8n through the Minescript API
+- **DockerManager**: Automatically starts and manages n8n Docker containers
+- **BaritoneBridge**: Controls pathfinding with plan execution and retry logic
+- **ChatBridge**: Manages chat integration with message deduplication
+- **TelemetryBridge**: Monitors player position, health, and world state
+- **ConnectionBridge**: Handles session management and connection tracking
+- **HudBridge**: Displays status information in the game HUD
+
+## Meteor Client Modules
+
+The mod includes several Meteor Client modules for different aspects of automation:
+
+### MinescriptLink Module
+- Main connection module that bridges Minecraft events to n8n
+- Live configuration options (no restart required):
+  - Chat receive/send toggle
+  - Telemetry publishing
+  - Baritone command acceptance
+  - Telemetry interval adjustment (250ms to 15s)
+- Session management with UUID-based session IDs
+- Auto-reconnection handling
+
+### Authentication Config Module
+- Central configuration for all connection settings
+- Organized into Connection, Authentication, Endpoints, and Docker groups
+- Features:
+  - Connection testing
+  - Auth key generation
+  - JSON credential export (pretty and compact formats)
+  - Clipboard integration for easy n8n setup
+  - File export for credential backup
+
+### OpenWeb Module
+- Opens web interfaces in your default browser
+- Quick access to n8n dashboard and other web tools
+- Configurable URLs for different environments
+
+### Timelapse Module
+- Captures screenshots at regular intervals
+- Useful for documenting automated builds or farming
+- Configurable timing and file naming
 
 ## 📦 Docker Installation
 
